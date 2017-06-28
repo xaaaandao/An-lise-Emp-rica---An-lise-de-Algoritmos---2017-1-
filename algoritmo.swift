@@ -130,3 +130,4 @@ func dynamicProgramming(_ vetor: inout[Int], fim : Int, inicio : Int) -> Int{
 }
 
 /* https://github.com/samuelsnyder/dyn-prog-max-subarray */
+/* https://stackoverflow.com/questions/2129794/how-to-log-a-methods-execution-time-exactly-in-milliseconds */
