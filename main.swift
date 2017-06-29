@@ -35,36 +35,56 @@ func main(){
 	//let n = vetor.count
 	var valores = [Int]()
 	var vetor = [Int]()
-	let n = 500
+	let n = 100
 
 	geraVetor(&valores, n : n)
 	preencheVetor(&valores, &vetor, n : n)
 	print(vetor)
 
 	var methodStart = Date()
-	print(enumeration(&vetor, n : n))
+	if(temElementoNegativo(&vetor)){
+		print("máximo subarray: 0")	
+	} else {
+		print("máximo subarray: \(enumeration(&vetor, n : n))")	
+	}
 	var methodFinish = Date()
 	var executionTime = methodFinish.timeIntervalSince(methodStart)
-	print("tempo de execução para o enumeration: \(executionTime) em microssegundos")
+	executionTime*=0.001
+	print("tempo de execução para o enumeration: \(executionTime) em milissegundos")
 
 
 	methodStart = Date()
-	print(betterEnumeration(&vetor, n : n))
+	if(temElementoNegativo(&vetor)){
+		print("máximo subarray: 0")	
+	} else {
+		print("máximo subarray: \(betterEnumeration(&vetor, n : n))")
+	}	
 	methodFinish = Date()
 	executionTime = methodFinish.timeIntervalSince(methodStart)
-	print("tempo de execução para o betterEnumeration: \(executionTime) em microssegundos")
+	executionTime*=0.001
+	print("tempo de execução para o betterEnumeration: \(executionTime) em milissegundos")
 
 	methodStart = Date()
-	print(divideAndConquer(&vetor, inicio : 0, fim : n-1))
+	if(temElementoNegativo(&vetor)){
+		print("máximo subarray: 0")	
+	} else {
+		print("máximo subarray: \(divideAndConquer(&vetor, inicio : 0, fim : n-1))")
+	}
 	methodFinish = Date()
 	executionTime = methodFinish.timeIntervalSince(methodStart)
-	print("tempo de execução para o divideAndConquer: \(executionTime) em microssegundos")
+	executionTime*=0.001
+	print("tempo de execução para o divideAndConquer: \(executionTime) em milissegundos")
 
 	methodStart = Date()
-	print(dynamicProgramming(&vetor, fim : n-1, inicio : 0))
+	if(temElementoNegativo(&vetor)){
+		print("máximo subarray: 0")	
+	} else {
+		print("máximo subarray: \(dynamicProgramming(&vetor, fim : n-1, inicio : 0)) ")
+	}
 	methodFinish = Date()
 	executionTime = methodFinish.timeIntervalSince(methodStart)
-	print("tempo de execução para o dynamicProgramming: \(executionTime) em microssegundos")
+	executionTime*=0.001
+	print("tempo de execução para o dynamicProgramming: \(executionTime) em milissegundos")
 
 
 }

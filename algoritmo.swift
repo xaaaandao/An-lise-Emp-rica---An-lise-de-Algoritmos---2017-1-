@@ -2,6 +2,26 @@
 import Foundation
 
 /**
+* Esta função temElementoNegativo recebemos um vetor e verificamos
+* se todos os elementos são negativos, se sim o máximo dele será zero;
+@param vetor, vetor do tipo de inteiro, que será aplicado o algoritmo;
+@return true ou false, é bool, ou seja, retorna verdadeiro se todos elementos negativos ou false caso não for.
+*/
+func temElementoNegativo(_ vetor : inout[Int]) -> Bool{
+	var i : Int = 0, contador : Int = 0
+	while(i < vetor.count){
+		if(vetor[i] < 0){
+			contador+=1
+		}
+		i+=1
+	}
+	if(contador == vetor.count){
+		return true
+	}
+	return false
+}
+
+/**
 * Esta função geraVetor recebemos um vetor e o tamanho do vetor
 * preenchemos um vetor com os valores começando pela
 * metade do número do tamanho do vetor negativo, e incremtamos colocando 
@@ -10,7 +30,7 @@ import Foundation
 @param n, tipo de inteiro, que é o tamanho do vetor;
 @return nada, é void, ou seja, retorna nada.
 */
-func geraVetor(_ valores: inout [Int], n : Int){
+func geraVetor(_ valores : inout [Int], n : Int){
 	var i = 0, valor = ((n / 2) * (-1))
 	while i < n {
 		valores.insert(valor, at:i)
@@ -116,7 +136,7 @@ func betterEnumeration(_ vetor: inout [Int], n : Int) -> Int{
 @return esquerda_somatorio+direita_somatorio, é um inteiro que retorna a soma de esquerda_somatorio + direita_somatorio
 */
 func findMaxCrossingSubarray(_ vetor: inout[Int], inicio : Int, meio : Int, fim : Int) -> Int{
-	var esquerda_somatorio : Int = -2147483648, direita_somatorio : Int = -2147483648
+	var esquerda_somatorio : Int = Int.min, direita_somatorio : Int = Int.min
 	var somatorio : Int = 0, i : Int
 	i = meio
 	while i >= inicio{
@@ -158,12 +178,18 @@ func divideAndConquer(_ vetor: inout[Int], inicio : Int, fim : Int) -> Int{
 		let esquerda_somatorio = divideAndConquer(&vetor, inicio : inicio, fim : meio);
 		let direita_somatorio = divideAndConquer(&vetor, inicio : meio + 1, fim : fim);
 		let meio_somatorio = findMaxCrossingSubarray(&vetor, inicio : inicio, meio : meio, fim : fim);
-		if esquerda_somatorio >= direita_somatorio && esquerda_somatorio >= meio_somatorio {
-			return esquerda_somatorio
-		} else if direita_somatorio >= esquerda_somatorio && direita_somatorio >= meio_somatorio {
-			return direita_somatorio
+		if esquerda_somatorio >= direita_somatorio {
+			if esquerda_somatorio >= meio_somatorio {
+				return esquerda_somatorio
+			} else {
+				return meio_somatorio
+			}
 		} else {
-			return meio_somatorio
+			if direita_somatorio >= esquerda_somatorio{
+				return direita_somatorio
+			} else {
+				return meio_somatorio
+			}
 		}
 	}
 }
