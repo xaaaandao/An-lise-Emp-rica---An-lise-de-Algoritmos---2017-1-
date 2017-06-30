@@ -2,26 +2,6 @@
 import Foundation
 
 /**
-* Esta função temElementoNegativo recebemos um vetor e verificamos
-* se todos os elementos são negativos, se sim o máximo dele será zero;
-@param vetor, vetor do tipo de inteiro, que será aplicado o algoritmo;
-@return true ou false, é bool, ou seja, retorna verdadeiro se todos elementos negativos ou false caso não for.
-*/
-func temElementoNegativo(_ vetor : inout[Int]) -> Bool{
-	var i : Int = 0, contador : Int = 0
-	while(i < vetor.count){
-		if(vetor[i] < 0){
-			contador+=1
-		}
-		i+=1
-	}
-	if(contador == vetor.count){
-		return true
-	}
-	return false
-}
-
-/**
 * Esta função geraVetor recebemos um vetor e o tamanho do vetor
 * preenchemos um vetor com os valores começando pela
 * metade do número do tamanho do vetor negativo, e incremtamos colocando 
@@ -124,41 +104,6 @@ func betterEnumeration(_ vetor: inout [Int], n : Int) -> Int{
 
 /* Algoritmo 3 */
 /**
-* Esta função findMaxCrossingSubarray recebemos um vetor de inteiros
-* o começo, o meio e o fim desse vetor, em que pegamos o somatorio da 
-* do começo até o meio do vetor, do meio até o fim do vetor.
-* Por fim, retornamos o valor do somatório do começo até o meio do vetor
-* mais o meio até o fim do vetor;
-@param vetor, vetor do tipo de inteiro, que será aplicado a função enumeration();
-@param inicio, tipo de inteiro, que é a posição inicial do vetor;
-@param meio, tipo de inteiro, que é a metade do tamanho do vetor;
-@param fim, tipo de inteiro, que é a posição final do vetor;
-@return esquerda_somatorio+direita_somatorio, é um inteiro que retorna a soma de esquerda_somatorio + direita_somatorio
-*/
-func findMaxCrossingSubarray(_ vetor: inout[Int], inicio : Int, meio : Int, fim : Int) -> Int{
-	var esquerda_somatorio : Int = Int.min, direita_somatorio : Int = Int.min
-	var somatorio : Int = 0, i : Int
-	i = meio
-	while i >= inicio{
-		somatorio += vetor[i]
-		if(somatorio > esquerda_somatorio){
-			esquerda_somatorio = somatorio
-		}
-		i-=1
-	}
-	somatorio = 0
-	i = meio + 1
-	while i <= fim{
-		somatorio += vetor[i]
-		if somatorio > direita_somatorio{
-			direita_somatorio = somatorio
-		}
-		i+=1
-	}
-	return esquerda_somatorio + direita_somatorio
-}
-
-/**
 * Esta função divideAndConquer recebemos um vetor que será aplicado 
 * no algoritmo o máximo valor do subarranjo, a posição inicial 
 * e a posição final do vetor. Esse algoritmo é melhor que a função 
@@ -170,28 +115,41 @@ func findMaxCrossingSubarray(_ vetor: inout[Int], inicio : Int, meio : Int, fim 
 @return esquerda_somatorio|meio_somatorio|direita_somatorio, é um inteiro que retorna um desses valores valor.
 */
 func divideAndConquer(_ vetor: inout[Int], inicio : Int, fim : Int) -> Int{
-	if inicio == fim {
-		return vetor[inicio]
-	} else {
-		//let meio = (inicio + fim) / 2;
-		let meio = inicio + (fim - inicio) / 2;
-		let esquerda_somatorio = divideAndConquer(&vetor, inicio : inicio, fim : meio);
-		let direita_somatorio = divideAndConquer(&vetor, inicio : meio + 1, fim : fim);
-		let meio_somatorio = findMaxCrossingSubarray(&vetor, inicio : inicio, meio : meio, fim : fim);
-		if esquerda_somatorio >= direita_somatorio {
-			if esquerda_somatorio >= meio_somatorio {
-				return esquerda_somatorio
-			} else {
-				return meio_somatorio
-			}
-		} else {
-			if direita_somatorio >= esquerda_somatorio{
-				return direita_somatorio
-			} else {
-				return meio_somatorio
-			}
-		}
+	var i, somatorio, meio, maiorDireita, maiorEsquerda : Int
+	if inicio > fim {
+		return 0
 	}
+
+	if inicio == fim {
+		return max(0, vetor[inicio])
+	}
+
+	meio = (inicio + fim) / 2
+
+	maiorEsquerda = 0
+	somatorio = 0
+	i = meio
+	while(i >= inicio){
+		somatorio+=vetor[i]
+		if(somatorio > maiorEsquerda){
+			maiorEsquerda = somatorio
+		}
+		i-=1
+	}
+	
+	maiorDireita = 0
+	somatorio = 0
+	i = meio + 1
+	while(i <= fim){
+		somatorio+=vetor[i]
+		if(somatorio > maiorDireita){
+			maiorDireita = somatorio
+		}
+		i+=1
+	}
+
+	return max(maiorDireita + maiorEsquerda,
+			max(divideAndConquer(&vetor, inicio : inicio, fim : meio), divideAndConquer(&vetor, inicio : meio+1, fim : fim)))
 }
 
 /* Algoritmo 4 */
@@ -206,27 +164,31 @@ func divideAndConquer(_ vetor: inout[Int], inicio : Int, fim : Int) -> Int{
 @param inicio, tipo de inteiro, que é a posição inicial do vetor;
 @return somatorio, é um inteiro que retorna o máximo do subarranjo.
 */
-func dynamicProgramming(_ vetor: inout[Int], fim : Int, inicio : Int) -> Int{
-	var auxiliar : Int = inicio
-	var somatorio : Int = vetor[auxiliar] + vetor[auxiliar + 1]
-	if auxiliar == fim - 2 {
-		auxiliar = 0
-		while auxiliar < fim{
-			if(vetor[auxiliar] > somatorio){
-				somatorio = vetor[auxiliar]
-			}
-			auxiliar+=1
+func dynamicProgramming(_ vetor: inout[Int]) -> Int{
+	var solucao = [Int](), tamanho : Int = vetor.count + 1, i : Int
+	var resultado : Int
+	
+	i = 0
+	while i < tamanho {
+		solucao.insert(0, at:i)
+		i+=1
+	}
+
+	i = 1
+	while i < tamanho {
+		solucao[i] = max(solucao[i-1]+vetor[i-1], vetor[i-1])
+		i+=1
+	}
+
+	resultado = solucao[0]
+
+	i = 1
+	while i < tamanho {
+		if resultado < solucao[i]{
+			resultado = solucao[i]
 		}
-		return somatorio
+		i+=1
 	}
 
-	if somatorio > vetor[auxiliar + 1]{
-		vetor[auxiliar + 1] = somatorio
-	}
-	return dynamicProgramming(&vetor, fim : fim, inicio : auxiliar + 1)
+	return resultado
 }
-
-/* Ver se funfa no outro pc e o tempo */
-/* Adicionar documentação das funções */
-/* https://github.com/samuelsnyder/dyn-prog-max-subarray */
-/* https://stackoverflow.com/questions/2129794/how-to-log-a-methods-execution-time-exactly-in-milliseconds */
